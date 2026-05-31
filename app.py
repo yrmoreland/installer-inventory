@@ -180,33 +180,21 @@ def checklist():
         "Nail Gun"
     ]
 
-    if request.method == "POST":
+   if request.method == "POST":
         installer_name = request.form["installer_name"]
 
         conn = get_db_connection()
 
-       for tool in tools:
-    checked = 1 if tool in request.form else 0
+        for tool in tools:
+            field_name = tool.replace(" ", "_").lower()
+            checked = 1 if f"{field_name}_present" in request.form else 0
+            notes = request.form.get(f"{field_name}_notes", "")
 
-    note_field = f"{tool}_note"
-    notes = request.form.get(note_field, "")
-
-    conn.execute("""
-        INSERT INTO tool_checklist
-        (installer_name, tool_name, checked, notes)
-        VALUES (?, ?, ?, ?)
-    """, (installer_name, tool, checked, notes))
-
-          conn.execute("""
-    CREATE TABLE IF NOT EXISTS tool_checklist (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        installer_name TEXT NOT NULL,
-        tool_name TEXT NOT NULL,
-        checked INTEGER DEFAULT 0,
-        notes TEXT,
-        check_date TEXT DEFAULT CURRENT_DATE
-    )
-""")
+            conn.execute("""
+                INSERT INTO tool_checklist
+                (installer_name, tool_name, checked, notes)
+                VALUES (?, ?, ?, ?)
+            """, (installer_name, tool, checked, notes))
 
         conn.commit()
         conn.close()
@@ -215,12 +203,18 @@ def checklist():
 
     conn = get_db_connection()
     checklist_history = conn.execute("""
-        SELECT * FROM tool_checklist
-        ORDER BY check_date DESC, installer_name
+        SELECT *
+        FROM tool_checklist
+        ORDER BY check_date DESC, installer_name, tool_name
     """).fetchall()
     conn.close()
 
-    return render_template("checklist.html", tools=tools, checklist_history=checklist_history)
+    return render_template(
+        "checklist.html",
+        tools=tools,
+        checklist_history=checklist_history
+    )
+
 
 
 create_tables()
