@@ -153,7 +153,8 @@ def delete_item(item_id):
     return redirect("/")
 
 
+create_tables()
+
 if __name__ == "__main__":
-    create_tables()
     app.run(debug=True)
     
