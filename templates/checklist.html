@@ -2,79 +2,170 @@
 <html>
 <head>
     <title>Daily Electric Tools Checklist</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background: #f5f5f5;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        a {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+        }
+
+        .tool-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+
+        .missing-reason {
+            display: none;
+            margin-top: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 8px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background: #16a34a;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            background: white;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background: #333;
+            color: white;
+        }
+
+        .missing {
+            background: #fee2e2;
+            color: #991b1b;
+            font-weight: bold;
+        }
+
+        .present {
+            background: #dcfce7;
+            color: #166534;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
     <h1>Daily Electric Tools Checklist</h1>
 
+    <a href="/">Back to Inventory</a>
+
     <form method="POST">
-        <label>Installer Name:</label><br>
+        <label><strong>Installer Name:</strong></label><br>
         <input type="text" name="installer_name" required><br><br>
 
-     {% for tool in tools %}
+        {% for tool in tools %}
+            {% set field_name = tool.replace(" ", "_").lower() %}
 
-<div style="margin-bottom:20px; border:1px solid #ccc; padding:10px;">
+            <div class="tool-card">
+                <label>
+                    <input
+                        type="checkbox"
+                        name="{{ field_name }}_present"
+                        value="1"
+                        checked
+                        onchange="toggleReason('{{ field_name }}')"
+                    >
+                    <strong>{{ tool }} Present</strong>
+                </label>
 
-    <input type="checkbox"
-           name="{{ tool }}"
-           value="1">
+                <div id="{{ field_name }}_reason_box" class="missing-reason">
+                    <label>Why is {{ tool }} missing?</label><br>
+                    <textarea
+                        name="{{ field_name }}_notes"
+                        rows="2"
+                        placeholder="Example: Left at job site, broken, borrowed by another installer, in warehouse, lost, etc."></textarea>
+                </div>
+            </div>
+        {% endfor %}
 
-    <label><strong>{{ tool }}</strong></label>
-
-    <br><br>
-
-    <label>If missing, explain why:</label>
-
-    <br>
-
-    <textarea
-        name="{{ tool }}_note"
-        rows="2"
-        cols="50"
-        placeholder="Example: Left at Job Site #104, Broken">
-    </textarea>
-
-</div>
-
-{% endfor %}
-
-        <br>
         <button type="submit">Submit Daily Checklist</button>
     </form>
 
-    <br>
-    <a href="/">Back to Inventory</a>
-
     <h2>Checklist History</h2>
 
-    <table border="1" cellpadding="8">
+    <table>
         <tr>
-    <th>Date</th>
-    <th>Installer</th>
-    <th>Tool</th>
-    <th>Status</th>
-    <th>Reason</th>
-</tr>
+            <th>Date</th>
+            <th>Installer</th>
+            <th>Tool</th>
+            <th>Status</th>
+            <th>Missing Reason</th>
+        </tr>
 
         {% for item in checklist_history %}
         <tr>
-    <td>{{ item.check_date }}</td>
-    <td>{{ item.installer_name }}</td>
-    <td>{{ item.tool_name }}</td>
+            <td>{{ item.check_date }}</td>
+            <td>{{ item.installer_name }}</td>
+            <td>{{ item.tool_name }}</td>
 
-    <td>
-        {% if item.checked == 1 %}
-            Present
-        {% else %}
-            Missing
-        {% endif %}
-    </td>
-
-    <td>{{ item.notes }}</td>
-
-</tr>
+            {% if item.checked == 1 %}
+                <td class="present">Present</td>
+                <td></td>
+            {% else %}
+                <td class="missing">Missing</td>
+                <td>{{ item.notes }}</td>
+            {% endif %}
+        </tr>
         {% endfor %}
     </table>
 
+    <script>
+        function toggleReason(fieldName) {
+            const checkbox = document.querySelector(`[name="${fieldName}_present"]`);
+            const reasonBox = document.getElementById(`${fieldName}_reason_box`);
+
+            if (checkbox.checked) {
+                reasonBox.style.display = "none";
+            } else {
+                reasonBox.style.display = "block";
+            }
+        }
+    </script>
+
 </body>
+</html>
 </html>
