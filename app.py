@@ -36,6 +36,16 @@ def create_tables():
         )
     """)
 
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS tool_checklist (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        installer_name TEXT NOT NULL,
+        tool_name TEXT NOT NULL,
+        checked INTEGER DEFAULT 0,
+        check_date TEXT DEFAULT CURRENT_DATE
+    )
+""")
+    
     conn.commit()
     conn.close()
 
@@ -151,6 +161,48 @@ def delete_item(item_id):
     conn.close()
 
     return redirect("/")
+
+@app.route("/checklist", methods=["GET", "POST"])
+def checklist():
+    tools = [
+        "Drill",
+        "Impact Driver",
+        "Hammer Drill",
+        "Multimeter",
+        "Fish Tape",
+        "Reciprocating Saw",
+        "Circular Saw",
+        "Battery Charger",
+        "Extension Cord",
+        "Work Light"
+    ]
+
+    if request.method == "POST":
+        installer_name = request.form["installer_name"]
+
+        conn = get_db_connection()
+
+        for tool in tools:
+            checked = 1 if tool in request.form else 0
+
+            conn.execute("""
+                INSERT INTO tool_checklist (installer_name, tool_name, checked)
+                VALUES (?, ?, ?)
+            """, (installer_name, tool, checked))
+
+        conn.commit()
+        conn.close()
+
+        return redirect("/checklist")
+
+    conn = get_db_connection()
+    checklist_history = conn.execute("""
+        SELECT * FROM tool_checklist
+        ORDER BY check_date DESC, installer_name
+    """).fetchall()
+    conn.close()
+
+    return render_template("checklist.html", tools=tools, checklist_history=checklist_history)
 
 
 create_tables()
