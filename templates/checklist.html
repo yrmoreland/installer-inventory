@@ -49,25 +49,30 @@
 
     <table border="1" cellpadding="8">
         <tr>
-            <th>Date</th>
-            <th>Installer</th>
-            <th>Tool</th>
-            <th>Status</th>
-        </tr>
+    <th>Date</th>
+    <th>Installer</th>
+    <th>Tool</th>
+    <th>Status</th>
+    <th>Reason</th>
+</tr>
 
         {% for item in checklist_history %}
         <tr>
-            <td>{{ item.check_date }}</td>
-            <td>{{ item.installer_name }}</td>
-            <td>{{ item.tool_name }}</td>
-            <td>
-                {% if item.checked == 1 %}
-                    Checked
-                {% else %}
-                    Missing/Unchecked
-                {% endif %}
-            </td>
-        </tr>
+    <td>{{ item.check_date }}</td>
+    <td>{{ item.installer_name }}</td>
+    <td>{{ item.tool_name }}</td>
+
+    <td>
+        {% if item.checked == 1 %}
+            Present
+        {% else %}
+            Missing
+        {% endif %}
+    </td>
+
+    <td>{{ item.notes }}</td>
+
+</tr>
         {% endfor %}
     </table>
 
