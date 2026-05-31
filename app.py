@@ -184,13 +184,28 @@ def checklist():
 
         conn = get_db_connection()
 
-        for tool in tools:
-            checked = 1 if tool in request.form else 0
+       for tool in tools:
+    checked = 1 if tool in request.form else 0
 
-            conn.execute("""
-                INSERT INTO tool_checklist (installer_name, tool_name, checked)
-                VALUES (?, ?, ?)
-            """, (installer_name, tool, checked))
+    note_field = f"{tool}_note"
+    notes = request.form.get(note_field, "")
+
+    conn.execute("""
+        INSERT INTO tool_checklist
+        (installer_name, tool_name, checked, notes)
+        VALUES (?, ?, ?, ?)
+    """, (installer_name, tool, checked, notes))
+
+          conn.execute("""
+    CREATE TABLE IF NOT EXISTS tool_checklist (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        installer_name TEXT NOT NULL,
+        tool_name TEXT NOT NULL,
+        checked INTEGER DEFAULT 0,
+        notes TEXT,
+        check_date TEXT DEFAULT CURRENT_DATE
+    )
+""")
 
         conn.commit()
         conn.close()
