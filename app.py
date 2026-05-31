@@ -36,12 +36,13 @@ def create_tables():
         )
     """)
 
-    conn.execute("""
+  conn.execute("""
     CREATE TABLE IF NOT EXISTS tool_checklist (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         installer_name TEXT NOT NULL,
         tool_name TEXT NOT NULL,
         checked INTEGER DEFAULT 0,
+        notes TEXT,
         check_date TEXT DEFAULT CURRENT_DATE
     )
 """)
