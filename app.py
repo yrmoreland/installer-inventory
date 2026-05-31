@@ -167,14 +167,16 @@ def checklist():
     tools = [
         "Drill",
         "Impact Driver",
+        "Batteries (4)",
+        "Personal Batteries",
         "Hammer Drill",
-        "Multimeter",
-        "Fish Tape",
-        "Reciprocating Saw",
-        "Circular Saw",
-        "Battery Charger",
-        "Extension Cord",
-        "Work Light"
+        "Oscilating Tool",
+        "Hand Saw",
+        "Shop Saw",
+        "Grinder",
+        "Steamer",
+        "Vaccum Cleaner",
+        "Nail Gun"
     ]
 
     if request.method == "POST":
