@@ -46,6 +46,11 @@ def create_tables():
         check_date TEXT DEFAULT CURRENT_DATE
     )
 """)
+
+try:
+    conn.execute("ALTER TABLE tool_checklist ADD COLUMN notes TEXT")
+except sqlite3.OperationalError:
+    pass
     
     conn.commit()
     conn.close()
