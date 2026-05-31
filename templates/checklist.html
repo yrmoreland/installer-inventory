@@ -11,10 +11,32 @@
         <label>Installer Name:</label><br>
         <input type="text" name="installer_name" required><br><br>
 
-        {% for tool in tools %}
-            <input type="checkbox" name="{{ tool }}" value="1">
-            <label>{{ tool }}</label><br>
-        {% endfor %}
+     {% for tool in tools %}
+
+<div style="margin-bottom:20px; border:1px solid #ccc; padding:10px;">
+
+    <input type="checkbox"
+           name="{{ tool }}"
+           value="1">
+
+    <label><strong>{{ tool }}</strong></label>
+
+    <br><br>
+
+    <label>If missing, explain why:</label>
+
+    <br>
+
+    <textarea
+        name="{{ tool }}_note"
+        rows="2"
+        cols="50"
+        placeholder="Example: Left at Job Site #104, Broken">
+    </textarea>
+
+</div>
+
+{% endfor %}
 
         <br>
         <button type="submit">Submit Daily Checklist</button>
