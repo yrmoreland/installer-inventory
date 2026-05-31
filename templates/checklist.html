@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daily Electric Tools Checklist</title>
+</head>
+<body>
+
+    <h1>Daily Electric Tools Checklist</h1>
+
+    <form method="POST">
+        <label>Installer Name:</label><br>
+        <input type="text" name="installer_name" required><br><br>
+
+        {% for tool in tools %}
+            <input type="checkbox" name="{{ tool }}" value="1">
+            <label>{{ tool }}</label><br>
+        {% endfor %}
+
+        <br>
+        <button type="submit">Submit Daily Checklist</button>
+    </form>
+
+    <br>
+    <a href="/">Back to Inventory</a>
+
+    <h2>Checklist History</h2>
+
+    <table border="1" cellpadding="8">
+        <tr>
+            <th>Date</th>
+            <th>Installer</th>
+            <th>Tool</th>
+            <th>Status</th>
+        </tr>
+
+        {% for item in checklist_history %}
+        <tr>
+            <td>{{ item.check_date }}</td>
+            <td>{{ item.installer_name }}</td>
+            <td>{{ item.tool_name }}</td>
+            <td>
+                {% if item.checked == 1 %}
+                    Checked
+                {% else %}
+                    Missing/Unchecked
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>
